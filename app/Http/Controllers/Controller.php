@@ -7,7 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
-class Controller extends BaseController
+class Controller extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
@@ -15,8 +15,8 @@ class Controller extends BaseController
     public const RESPONSE_MSG = 'msg'; // string 错误描述
     public const RESPONSE_DATA = 'data'; // [] 返回的信息
 
-    // 统一响应格式
-    protected function response($data, $msg = '', $code = 200)
+    // 外部调用，统一响应格式
+    public static function StaticResponse($data, $msg = '', $code = 200)
     {
         return response()->json([
             static::RESPONSE_CODE => $code,
@@ -25,14 +25,10 @@ class Controller extends BaseController
         ], $code);
     }
 
-    // 外部调用
-    public static function StaticResponse($data, $msg = '', $code = 200)
+    // 控制器专用，统一响应格式
+    protected function response($data, $msg = '', $code = 200)
     {
-        return response()->json([
-            static::RESPONSE_CODE => $code,
-            static::RESPONSE_MSG => $msg,
-            static::RESPONSE_DATA => $data,
-        ], $code);
+        return static::StaticResponse($data, $msg, $code);
     }
 
     // 收集的状态码列表
