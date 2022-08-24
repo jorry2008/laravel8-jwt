@@ -8,6 +8,8 @@
 </p>
 安装流程：
 
+- 在服务器根目录运行 git clone git@github.com:jorry2008/laravel8-jwt.git jwtproject
+- cd jwtproject
 - composer install 安装 vendor
 - 修改 .env.example 为 .env 配置好数据库
 - 运行 php artisan migrate 迁移数据库
