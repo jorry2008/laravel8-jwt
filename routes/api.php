@@ -17,16 +17,20 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-// 用户认证相关
-Route::post('login', 'AuthController@login');
+// 开放的用户登录、注册
+Route::post('login', 'AuthController@login')->name('login');
 Route::post('register', 'AuthController@register');
-Route::post('logout', 'AuthController@logout');
-Route::post('refresh', 'AuthController@refresh');
-Route::get('user-profile', 'AuthController@userProfile');
 
-// 业务相关
-Route::get('articles', 'ArticleController@index');
-Route::get('articles/{article}', 'ArticleController@show');
-Route::post('articles', 'ArticleController@store');
-Route::put('articles/{article}', 'ArticleController@update');
-Route::delete('articles/{article}', 'ArticleController@delete');
+// 在刷新有效其内，刷新令牌操作
+Route::middleware('refresh.token')->group(function () { // 使用 refresh.token 中间件刷新令牌（只能执行一次！！！）
+    Route::post('refresh', 'AuthController@refresh');
+});
+
+// 登录状态的业务操作
+Route::middleware(['auth:api'])->group(function () { // 判断是否登录 auth:api
+    Route::post('logout', 'AuthController@logout');
+    Route::get('user-profile', 'AuthController@userProfile');
+
+    // 其它业务
+    // ...
+});
