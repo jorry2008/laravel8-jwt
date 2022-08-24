@@ -13,9 +13,9 @@ class AuthController extends Controller
      *
      * @return void
      */
-    public function __construct() {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
+//     public function __construct() {
+//         $this->middleware('auth:api', ['except' => ['login', 'register']]);
+//     }
 
     /**
      * Get a JWT via given credentials.
@@ -52,7 +52,7 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-             return response()->json($validator->errors(), 400);
+             return $this->response($validator->errors(), '参数错误', 400);
         }
 
         $user = User::create(array_merge(
@@ -70,7 +70,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout() {
-        auth()->logout();
+        !auth()->guest() && auth()->logout();
         return $this->response([], 'User successfully signed out', 200);
     }
 
@@ -80,7 +80,8 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh() {
-        return $this->response($this->createNewToken(auth()->refresh()), '重置token成功', 200);
+        // $this->createNewToken(auth()->refresh()
+        return $this->response([], '刷新token成功', 200);
     }
 
     /**
@@ -89,6 +90,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
+        // '过期时间还剩：'.((auth()->guard()->payload()->get('exp')-time()))
         return $this->response(auth()->user());
     }
 
